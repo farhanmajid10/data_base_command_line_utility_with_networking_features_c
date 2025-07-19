@@ -1,0 +1,41 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/file.o",
+      "src/file.c"
+    ],
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/file.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/file.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/main.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/parse.o",
+      "src/parse.c"
+    ],
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/parse.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/parse.o"
+  }
+]
