@@ -18,12 +18,12 @@ typedef struct {
     int fd;
     state_e state;
     char buf[BUFF_SIZE];
-} clientState_t;
+} clientstate_t;
 
-void init_clients(clientState_t *states);
+void init_clients(clientstate_t *states);
 
-int find_free_slot(clientState_t *states);
+int find_free_slot(clientstate_t *states);
 
-int find_slots_by_id(clientState_t *states, int fd);
+int find_slot_by_fd(clientstate_t *states, int fd);
 
 #endif

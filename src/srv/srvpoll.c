@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/select.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "common.h"
 #include "file.h"

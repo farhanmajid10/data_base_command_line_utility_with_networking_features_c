@@ -5,12 +5,12 @@
       "-c",
       "-Iinclude",
       "-o",
-      "obj/file.o",
-      "src/file.c"
+      "obj/srv/file.o",
+      "src/srv/file.c"
     ],
-    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
-    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/file.c",
-    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/file.o"
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/src/srv/file.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/obj/srv/file.o"
   },
   {
     "arguments": [
@@ -18,12 +18,12 @@
       "-c",
       "-Iinclude",
       "-o",
-      "obj/main.o",
-      "src/main.c"
+      "obj/srv/main.o",
+      "src/srv/main.c"
     ],
-    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
-    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/main.c",
-    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/main.o"
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/src/srv/main.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/obj/srv/main.o"
   },
   {
     "arguments": [
@@ -31,11 +31,24 @@
       "-c",
       "-Iinclude",
       "-o",
-      "obj/parse.o",
-      "src/parse.c"
+      "obj/srv/parse.o",
+      "src/srv/parse.c"
     ],
-    "directory": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c",
-    "file": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/src/parse.c",
-    "output": "/home/farhan/workspace/github.com/farhanmajid10/database_command_line_utility_c/obj/parse.o"
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/src/srv/parse.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/obj/srv/parse.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/srv/srvpoll.o",
+      "src/srv/srvpoll.c"
+    ],
+    "directory": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c",
+    "file": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/src/srv/srvpoll.c",
+    "output": "/home/farhan/workspace/github.com/farhanmajid10/data_base_command_line_utility_with_networking_features_c/obj/srv/srvpoll.o"
   }
 ]

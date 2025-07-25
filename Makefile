@@ -5,7 +5,7 @@ SRC_SRV = $(wildcard src/srv/*.c)
 OBJ_SRV = $(SRC_SRV:src/srv/%.c=obj/srv/%.o)
 
 SRC_CLI = $(wildcard src/cli/*.c)
-OBJ_SRV = $(SRC/CLI:src/cli/%.c=obj/cli/%.o)
+OBJ_CLI = $(SRC_CLI:src/cli/%.c=obj/cli/%.o)
 
 run: clean default
 	./$(TARGET_SRV) -f ./mynewdb.db -n -p 8080
@@ -26,6 +26,6 @@ $(OBJ_SRV): obj/srv/%.o:src/srv/%.c
 $(TARGET_CLI):$(OBJ_CLI)
 	gcc -o $@ $?
 
-$(OBJ_CLI): obj/cli/%.o:srv/cli/%.c
+$(OBJ_CLI): obj/cli/%.o:src/cli/%.c
 	gcc -c $< -o $@ -Iinclude
 

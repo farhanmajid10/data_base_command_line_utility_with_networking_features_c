@@ -41,7 +41,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
     int nfds = 1;
     int opt = 1;
 
-    init_clients(&clientStates);
+    init_clients(clientStates);
 
     listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if(listen_fd == -1){
@@ -49,6 +49,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
         return;
     }
 
+   //might have an error. have to check the man page. 
     if(setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1){
         perror("setsockopt");
         return;
@@ -61,13 +62,14 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
 
     if(bind(listen_fd, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1){
         perror("bind");
-        return -1;
+        return;
     }
 
     if(listen(listen_fd, 10) == -1){
         perror("listen");
-        return -1;
+        return;
     }
+
     
     memset(fds, 0, sizeof(fds));
     fds[0].fd = listen_fd;
@@ -88,21 +90,21 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
         int n_events = poll(fds, nfds, -1);
         if(n_events == -1){
             perror("poll");
-            return -1;
+            return;
         }
 
         if(fds[0].revents & POLLIN){
             conn_fd = accept(listen_fd, (struct sockaddr *) &client_addr, &client_len );
             if(conn_fd == -1){
                 perror("accept");
-                return -1;
+                return;
             }
 
             printf("New connection from %s : %d \n",inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             
-            free_slot = find_free_slot();
+            free_slot = find_free_slot(clientStates);
             if(free_slot == -1){
-                printf("Server Full. Closing Connection.\n");
+                printf("Server Full. Closing new Connection.\n");
                 close(conn_fd);
             }else{
                 clientStates[free_slot].fd = conn_fd;
@@ -118,7 +120,7 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
                 n_events--;
 
                 int fd = fds[i].fd;
-                int slot = find_free_slot(fd);
+                int slot = find_slot_by_fd(clientStates, fd);
 
                 ssize_t bytes_read = read(fd, &clientStates[slot].buf, sizeof(clientStates[slot].buf));
                 
@@ -138,142 +140,88 @@ void poll_loop(unsigned short port, struct dbheader_t *dbhdr, struct employee_t 
             }
         }    
     }
-    return 0;
+    return;
 }
 
 
 
+
 int main(int argc, char *argv[]) {
-  int c = 0;
-  bool newfile = false;
-  char *file_path = NULL;
-  int dbfd = -1;
-  struct employee_t *employees;
-  struct employee_t *employeesOut;
-  char *employee_string = NULL;
-  bool list = false;
-  bool search_employee = false;
-  bool remove_employee = false;
-  bool change_hours = false;
-  char *to_be_removed = NULL;
-  char *to_be_searched = NULL;
-  char *new_hours = NULL;
-  struct dbheader_t *headerOut = NULL;
 
-  while ((c = getopt(argc, argv, "nf:a:ls:r:h:")) != -1) {
-    switch (c) {
-    case 'n':
-      newfile = true;
-      break;
-    case 'f':
-      file_path = optarg;
-      break;
-    case 'a':
-      employee_string = optarg;
-      break;
-    case 'l':
-      list = true;
-      break;
-    case 's':
-      search_employee = true;
-      to_be_searched = optarg;
-      break;
-    case 'r':
-      remove_employee = true;
-      to_be_removed = optarg;
-      break;
-    case 'h':
-      change_hours = true;
-      new_hours = optarg;
-      break;
-    case '?':
-      printf("-%s is unkown option\n", optarg);
-      break;
-    default:
-      printf("Error detected\n");
-      return -1;
-    }
-  }
-  if (file_path == NULL) {
-    printf("File Path is a required argument.\n");
-    print_usage(argv);
-    return 0;
-  }
+    char* filepath = NULL;
+    char* portarg = NULL;
+    unsigned short port = 0;
+    bool newfile = false;
+    bool list = false;
+    int c;
 
-  if (newfile) {
-    dbfd = create_db_file(file_path);
-    if (dbfd == STATUS_ERROR) {
-      printf("Unable to create database file.\n");
-      return -1;
-    }
-    int header_create = create_db_header(dbfd, &headerOut);
-    if (header_create == STATUS_ERROR) {
-      printf("Was not able to create the header.\n");
-      return -1;
-    }
-  } else {
-    dbfd = open_db_file(file_path);
-    if (dbfd == STATUS_ERROR) {
-      printf("Unable to open database file.\n");
-      return -1;
-    }
-    if (validate_db_header(dbfd, &headerOut) == STATUS_ERROR) {
-      printf("Failed to validate the database header.\n");
-      return STATUS_ERROR;
-    }
-  }
-
-  if (read_employees(dbfd, headerOut, &employeesOut) != STATUS_SUCCESS) {
-    printf("Reading employees failed. \n");
-    return -1;
-  }
-
-  if (employee_string) {
-    headerOut->count++;
-    employeesOut = realloc(employeesOut, headerOut->count * (sizeof(struct employee_t)));
-    if (employeesOut == NULL) {
-      printf("Realloc for adding employee_failed.\n");
-      return STATUS_ERROR;
-    }
-    add_employee(headerOut, employeesOut, employee_string);
-  }
-
-  if (search_employee) {
-    search_employees(headerOut, employeesOut, to_be_searched);
-  }
-
-  if (remove_employee) {
-    int remove_code = -1;
-    remove_code = remove_employees(headerOut, employeesOut, to_be_removed);
-        if(remove_code == 0){
-            printf("could not find employee in database.\n");
-        }else if(remove_code == 1){
-            headerOut->count--;
-            free(employeesOut);
-            employeesOut = NULL;
-        }else if(remove_code == 2){
-            headerOut->count--;
-            employeesOut = realloc(employeesOut, (headerOut->count * (sizeof(struct employee_t))));
-            if(employeesOut == NULL){
-                printf("Realloc failed for removing employee.\n");
-            return STATUS_ERROR;
-            }
+    int dbfd = -1;
+    struct dbheader_t *dbhdr = NULL;
+    struct employee_t *employees = NULL;
+    
+    while((c = getopt(argc, argv, "nf:p:")) != -1){
+        switch (c) {
+            case 'n':
+                newfile = true;
+                break;
+            case 'f':
+                filepath = optarg;
+                break;
+            case 'p':
+                portarg = optarg;
+                port = atoi(portarg);
+                if(port == 0){
+                    printf("Bad Port\n");
+                }
+                break;
+            case '?':
+                printf("Unknown Option -%c\n", c);
+            default:
+                return -1;
         }
     }
-
-  if(change_hours){
-    employee_hour_change(headerOut, employeesOut, new_hours);
+        
+    if(filepath == NULL){
+        printf("Filepath is a required argument.\n");
+        print_usage(argv);    
     }
 
-  if (list) {
-    list_employees(headerOut, employeesOut);
-  }
+    if(port == 0){
+        printf("port is not set\n");
+        print_usage(argv);    
+    }
 
-  output_file(dbfd, headerOut, employeesOut);
+    if(newfile){
+        dbfd = create_db_file(filepath);
+        if(dbfd == STATUS_ERROR){
+            printf("Unable to create database file.\n.");
+            return -1;
+        }
 
-  printf("newfile : %d\n", newfile);
-  printf("file_path: %s\n", file_path);
-  return 0;
+        if(create_db_header(dbfd, &dbhdr)){
+            printf("Unable to create database header.\n");
+            return -1;
+        }
+    }else{
+        dbfd = open_db_file(filepath);
+        if(dbfd == STATUS_ERROR){
+            printf("Unable to open database file.\n");
+            return -1;
+        }
+        if(validate_db_header(dbfd, &dbhdr) == STATUS_ERROR){
+            printf("failed to validate database header.\n");
+            return -1;
+        }
+    }
+        if(read_employees(dbfd, dbhdr, &employees) !=STATUS_SUCCESS){
+            printf("failed to read employees.\n");
+            return 0;
+        }
+        poll_loop(port, dbhdr,  employees);
+        
+        output_file(dbfd, dbhdr, employees);
+
+        return 0;
 }
 
 /*
